@@ -22,4 +22,8 @@ return [
         'password_confirmation',
     ],
 
+    'environments' => [
+        'production',
+    ],
+
 ];

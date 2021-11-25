@@ -14,6 +14,8 @@ class LogNonGetRequestsTest extends TestCase
         parent::setup();
 
         $this->logProfile = new LogNonGetRequests();
+
+        config()->set('http-logger.environments', ['testing']);
     }
 
     /** @test */
@@ -34,5 +36,23 @@ class LogNonGetRequestsTest extends TestCase
 
             $this->assertFalse($this->logProfile->shouldLogRequest($request), "{$method} should not be logged.");
         }
+    }
+
+    /** @test */
+    public function it_will_log_when_current_environment_match()
+    {
+        $request = $this->makeRequest('post', $this->uri);
+
+        $this->assertTrue($this->logProfile->shouldLogRequest($request), 'post should be logged.');
+    }
+
+    /** @test */
+    public function it_will_log_when_current_environment_dosent_match()
+    {
+        config()->set('http-logger.environments', ['production']);
+
+        $request = $this->makeRequest('post', $this->uri);
+
+        $this->assertFalse($this->logProfile->shouldLogRequest($request), 'post should not be logged.');
     }
 }
